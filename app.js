@@ -74,10 +74,15 @@ if ('development' == app.get('env')) {
 
 // Database Connection
 
+var mongoUri = process.env.MONGOLAB_URI ||
+               process.env.MONGOHQ_URL ||
+               'mongodb://localhost/todomvc-accounts';
+
 if ('development' == app.get('env')) {
-  mongoose.connect('mongodb://localhost/nodedemo');
+  mongoose.connect(mongoUri);
 } else {
   // insert db connection for production
+  mongoose.connect(mongoUri);
 }
 
 // Authentication
