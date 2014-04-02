@@ -6,6 +6,7 @@ var express = require('express')
   , User = mongoose.model('User')
   , welcome = require('./controllers/welcome')
   , users = require('./controllers/users')
+  , apiUsers = require('./controllers/api/users')
   , http = require('http')
   , path = require('path')
   , engine = require('ejs-locals')
@@ -15,12 +16,14 @@ var express = require('express')
   , expressValidator = require('express-validator')
   , mailer = require('express-mailer')
   , config = require('./config')
+  , cors = require('cors')
   , app = express();
 
 app.engine('ejs', engine);
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
+app.use(cors());
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
@@ -139,7 +142,12 @@ app.post('/account', ensureAuthenticated, users.userValidations, users.update);
 app.get('/dashboard', ensureAuthenticated, users.dashboard);
 app.get('/logout', users.logout);
 app.get('/users', ensureAuthenticated, users.list); // for illustrative purposes only
+
+app.get('/api/users/:username', apiUsers.getByUsername);
+
 app.all('*', welcome.not_found);
+
+
 
 // Start Server w/ DB Connection
 
